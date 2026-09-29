@@ -773,36 +773,19 @@ function createListItemHTML(store, medicineName) {
   li.className = 'pharmacy-card';
   
   const whatsappUrl = buildWhatsAppLink(store.phone, store.name, medicineName);
-  const sourceClass = "source-verified";
-  
-  let actionHTML = "";
-  if (store.phone) {
-    actionHTML = `
-      <a href="${whatsappUrl}" target="_blank" class="card-wa-btn">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.324 5.328 0 11.859 0c3.161.001 6.136 1.233 8.375 3.474 2.238 2.24 3.467 5.218 3.465 8.385-.005 6.537-5.33 11.861-11.86 11.861-2.008-.002-3.98-.513-5.732-1.488L0 24zm6.549-2.834c1.659.985 3.298 1.487 5.247 1.489 5.485 0 9.948-4.462 9.952-9.948.002-2.658-1.03-5.158-2.905-7.034C17.025 3.797 14.53 2.766 11.862 2.765c-5.487 0-9.95 4.463-9.954 9.95-.001 1.849.48 3.655 1.393 5.243l-.95 3.468 3.706-.96zm12.593-7.558c-.347-.174-2.057-1.011-2.375-1.127-.318-.116-.549-.174-.78.174-.231.347-.894 1.127-1.096 1.358-.202.231-.404.26-.75.087-.347-.174-1.464-.539-2.787-1.72-1.03-1.03-1.724-2.148-1.926-2.494-.203-.347-.022-.534.151-.708.156-.156.347-.405.52-.607.173-.203.231-.347.347-.578.115-.231.057-.434-.029-.607-.087-.173-.78-1.879-1.069-2.572-.28-.674-.564-.582-.78-.593-.202-.011-.434-.012-.665-.012-.231 0-.607.087-.924.434-.318.347-1.213 1.185-1.213 2.89 0 1.705 1.242 3.352 1.416 3.583.173.231 2.445 3.734 5.922 5.234.827.357 1.472.569 1.975.729.831.264 1.587.227 2.185.138.666-.1 2.057-.838 2.346-1.647.289-.809.289-1.502.202-1.647-.087-.145-.318-.232-.665-.405z"/>
-        </svg>
-        <span>WhatsApp</span>
-      </a>
-    `;
-  } else {
-    actionHTML = '';
-  }
-
   const statusLabel = store.phone ? i18n[currentLang]["available"] : i18n[currentLang]["missing"];
   
   li.innerHTML = `
     <div class="card-body">
       <div class="card-header-row">
-        <h4>${store.name}</h4>
-        <span class="badge ${sourceClass}">${store.source}</span>
+        <h4 class="card-name"></h4>
+        <span class="badge source-verified"></span>
       </div>
-      <p class="card-meta">📍 ${store.distance} km away • 📞 ${statusLabel}</p>
-      <p class="card-address">${store.address}</p>
+      <p class="card-meta"></p>
+      <p class="card-address"></p>
     </div>
     <div class="card-actions">
-      ${actionHTML}
-      <button class="card-explore-btn" data-store-id="${store.id}" title="Explore this pharmacy">
+      <button class="card-explore-btn" title="Explore this pharmacy">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/>
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -814,7 +797,26 @@ function createListItemHTML(store, medicineName) {
     </div>
   `;
 
-  // Attach explore button handler after innerHTML is set
+  li.querySelector('.card-name').textContent = store.name;
+  li.querySelector('.badge').textContent = store.source;
+  li.querySelector('.card-meta').textContent = `📍 ${store.distance} km away • 📞 ${statusLabel}`;
+  li.querySelector('.card-address').textContent = store.address;
+
+  if (store.phone) {
+    const whatsappLink = document.createElement('a');
+    whatsappLink.href = whatsappUrl;
+    whatsappLink.target = '_blank';
+    whatsappLink.rel = 'noopener noreferrer';
+    whatsappLink.className = 'card-wa-btn';
+    whatsappLink.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.324 5.328 0 11.859 0c3.161.001 6.136 1.233 8.375 3.474 2.238 2.24 3.467 5.218 3.465 8.385-.005 6.537-5.33 11.861-11.86 11.861-2.008-.002-3.98-.513-5.732-1.488L0 24zm6.549-2.834c1.659.985 3.298 1.487 5.247 1.489 5.485 0 9.948-4.462 9.952-9.948.002-2.658-1.03-5.158-2.905-7.034C17.025 3.797 14.53 2.766 11.862 2.765c-5.487 0-9.95 4.463-9.954 9.95-.001 1.849.48 3.655 1.393 5.243l-.95 3.468 3.706-.96zm12.593-7.558c-.347-.174-2.057-1.011-2.375-1.127-.318-.116-.549-.174-.78.174-.231.347-.894 1.127-1.096 1.358-.202.231-.404.26-.75.087-.347-.174-1.464-.539-2.787-1.72-1.03-1.03-1.724-2.148-1.926-2.494-.203-.347-.022-.534.151-.708.156-.156.347-.405.52-.607.173-.203.231-.347.347-.578.115-.231.057-.434-.029-.607-.087-.173-.78-1.879-1.069-2.572-.28-.674-.564-.582-.78-.593-.202-.011-.434-.012-.665-.012-.231 0-.607.087-.924.434-.318.347-1.213 1.185-1.213 2.89 0 1.705 1.242 3.352 1.416 3.583.173.231 2.445 3.734 5.922 5.234.827.357 1.472.569 1.975.729.831.264 1.587.227 2.185.138.666-.1 2.057-.838 2.346-1.647.289-.809.289-1.502.202-1.647-.087-.145-.318-.232-.665-.405z"/>
+      </svg>
+      <span>WhatsApp</span>
+    `;
+    li.querySelector('.card-actions').prepend(whatsappLink);
+  }
+
   const exploreBtn = li.querySelector('.card-explore-btn');
   if (exploreBtn) {
     exploreBtn.addEventListener('click', (e) => {
@@ -824,6 +826,24 @@ function createListItemHTML(store, medicineName) {
   }
   
   return li;
+}
+
+function createQuickSearchButton(label, storeName, searchTerm) {
+  const button = document.createElement('button');
+  button.className = 'quick-search-btn';
+  button.type = 'button';
+  button.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  `;
+  button.appendChild(document.createTextNode(` ${label}`));
+  button.addEventListener('click', () => {
+    const query = encodeURIComponent(`${storeName} Kerala ${searchTerm}`);
+    window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
+  });
+  return button;
 }
 
 // Generate pre-filled WhatsApp link
@@ -905,12 +925,17 @@ function showStoreDetails(store) {
 
   // ── 1. Populate immediately with OSM data ──
   // Provide a quick-search button if data is missing, instead of just saying "--"
-  const missingPhoneBtn = `<button class="quick-search-btn" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(store.name + ' Kerala phone number')}', '_blank', 'noopener,noreferrer')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Search Web</button>`;
-  
-  const missingHoursBtn = `<button class="quick-search-btn" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(store.name + ' Kerala opening hours')}', '_blank', 'noopener,noreferrer')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Check Hours</button>`;
+  const phoneElement = document.getElementById('detail-phone');
+  phoneElement.textContent = store.phone || '';
+  if (!store.phone) {
+    phoneElement.appendChild(createQuickSearchButton('Search Web', store.name, 'phone number'));
+  }
 
-  document.getElementById('detail-phone').innerHTML = store.phone ? store.phone : missingPhoneBtn;
-  document.getElementById('detail-hours').innerHTML = store.opening_hours ? store.opening_hours : missingHoursBtn;
+  const hoursElement = document.getElementById('detail-hours');
+  hoursElement.textContent = store.opening_hours || '';
+  if (!store.opening_hours) {
+    hoursElement.appendChild(createQuickSearchButton('Check Hours', store.name, 'opening hours'));
+  }
 
   document.getElementById('detail-store-name').textContent = store.name;
   const categoryElem = document.getElementById('detail-category');
@@ -930,7 +955,7 @@ function showStoreDetails(store) {
       btnWhatsapp.removeAttribute('disabled'); btnWhatsapp.classList.remove('disabled');
       btnWhatsapp.onclick = () => window.open(buildWhatsAppLink(phone, store.name, medicineName), '_blank');
       btnCall.removeAttribute('disabled'); btnCall.classList.remove('disabled');
-      btnCall.onclick = () => { window.location.href = `tel:${phone}`; };
+      btnCall.onclick = () => { window.location.href = `tel:${phone.replace(/[^\d+]/g, '')}`; };
     } else {
       btnWhatsapp.setAttribute('disabled', 'true'); btnWhatsapp.classList.add('disabled'); btnWhatsapp.onclick = null;
       btnCall.setAttribute('disabled', 'true'); btnCall.classList.add('disabled'); btnCall.onclick = null;
